@@ -263,7 +263,7 @@ functions{
         
       for (r in 1:len) {  // loop over species-points
         logit_theta = logit_theta_vector[r] + logit_theta_matrix[r,1:data_slice[r,6]] + d0_spObs[data_slice[r,11:(10 + data_slice[r,6])]];
-        // likelihood
+        // marginalised likelihood 
         if (data_slice[r,5] == 1) {
           lp[r] = log_inv_logit(logit_psi[r]) +  // likelihood of occupancy
           bernoulli_logit_lpmf(data_slice[r, 1:data_slice[r,6]] | logit_theta);   // conditional likelihood of observed history
