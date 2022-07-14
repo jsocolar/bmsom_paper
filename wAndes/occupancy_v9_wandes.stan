@@ -1,4 +1,4 @@
-// This is a Stan model for the West Andes analysis presented in "Biogeographic 
+// bMSOM Stan model for the West Andes analysis presented in "Biogeographic 
 // multi-species occupancy models for large-scale survey data"
 // Note: code inherits from version 9.0 of the pan-Colombia model
 
