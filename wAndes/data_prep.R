@@ -1,5 +1,8 @@
+# Script to prepare data for model fitting
+
 wandes_birds <- readRDS("/Users/jacobsocolar/Dropbox/Work/Occupancy/biogeographicMSOM/wandes_birds.RDS")
 
+# clip to elevations 
 wandes_birds_2 <- wandes_birds[wandes_birds$elev_sp_standard > 0 & 
                                wandes_birds$elev_sp_standard < 1, ]
 
@@ -24,11 +27,14 @@ plot(logit_prop ~ distance, data = range_data)
 plot(logit_prop ~ distance, data = range_data[n1>1,])
 
 # High noise at very small distances, probably related to smallish sample sizes 
-# and the idiosyncracies of just a few species that are this distant anywhere in the data.
-# Then a nice downwards trend near zero, and pair of obnoxious outliers well out-of-range
+# and the idiosyncracies of just a few species that are this distant anywhere in 
+# the data.
+# Then a nice downwards trend near zero, and pair of obnoxious outliers well 
+# out-of-range
 wandes_birds_2$species[wandes_birds_2$distance_from_range > 60000 & wandes_birds_2$Q == 1]
-# These outliers are entirely confined to a single species, which simply will have a very atypical slope
-# for the range covariate in the model. We'll focus on getting something that fits necely between -60000 and 60000
+# These outliers are entirely confined to a single species, which simply will 
+# have a very atypical slope for the range covariate in the model. We'll focus 
+# on getting something that fits nicely between -60000 and 60000
 
 breaks <- seq(from = -60000, to = 60000, length.out = 100)
 midpoints <- breaks[-length(breaks)] + (breaks[2]-breaks[1])/2
@@ -41,7 +47,8 @@ for(i in 1:length(midpoints)){
 range_data <- data.frame(prop_det = n1/(n1+n0), distance = midpoints)
 range_data$logit_prop <- boot::logit(range_data$prop_det)
 plot(logit_prop ~ distance, data = range_data)
-# The dip down on the left side involves just a handful of species in bins with only a single detection each (high noise.  We can ignore these for now)
+# The dip down on the left side involves just a handful of species in bins with 
+# only a single detection each (high noise.  We can ignore these for now)
 
 plot(logit_prop ~ distance, data = range_data[n1>1,])
 wandes_birds_2$species[wandes_birds_2$distance_from_range > -60000 & wandes_birds_2$distance_from_range < -40000 & wandes_birds_2$Q == 1]
@@ -53,10 +60,12 @@ funnyroot <- function(x, n){
 }
 
 plot(logit_prop ~ distance, data = range_data)
+
 # Other than this dip, we already look linear-ish, but perhaps we're a bit concave down.
 # We have a strong a priori expectation for concave-downness and an asymptote at low values
 # so we'll start by exponentiating in search of a formulation that places hierarchical priors 
 # on a common "core-of-range" scenario
+
 range_data$dist_trans <- exp(range_data$distance)
 plot(logit_prop ~ dist_trans, data = range_data)
 
@@ -81,14 +90,11 @@ plot(logit_prop ~ dist_trans, data = range_data)
 # This is looking much better. We can't completely fix those two points on the far right,
 # but this seems like an ok compromise.
 
-
 range_data$dist_trans <- boot::inv.logit(range_data$distance/14900)
 plot(logit_prop ~ dist_trans, data = range_data)
 plot(logit_prop ~ distance, data = range_data)
 
-
 wandes_birds$dist_trans <- boot::inv.logit(wandes_birds$distance_from_range/10000)
-
 
 # function to translate effects-coded predictor to 1/2 indices
 grt_b <- function(predictor){
@@ -570,10 +576,6 @@ plot(post_mean ~ elevs, data = pasture_rich, pch = 16)
 lw3 <- loess(post_mean ~ elevs, data=pasture_rich)
 j <- order(pasture_rich$elevs)
 lines(pasture_rich$elevs[j],lw3$fitted[j],col="red",lwd=3)
-
-
-
-
 
 plot(seq(1300, 2500, 10), predict(lw1, seq(1300, 2500, 10)) - predict(lw3, seq(1300, 2500, 10)), 
      type = "l", lwd = 3, col = "red", ylim = c(0, 80),

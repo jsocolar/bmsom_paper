@@ -1,9 +1,16 @@
-library(cmdstanr)
+# Script to fit bMSOM and data-augmented versions of occupancy model to West
+# Andes dataset
+
+# packages
+library(cmdstanr); library(flocker)
 
 # fit the bMSOM
+## data & model
 data_package <- readRDS("/Users/jacobsocolar/Dropbox/Work/Occupancy/biogeographicMSOM/wandes_data/wandes_bsd9_package.RDS")
 wandes_mod <- cmdstan_model("/Users/jacobsocolar/Dropbox/Work/Code/Occupancy/biogeographicMSOM/stan_files/occupancy_v9_wandes.stan", 
                             force_recompile = T)
+
+## sample
 wandes_samples <- wandes_mod$sample(data = data_package$data, 
                                chains = 4,
                                parallel_chains = 4,
@@ -20,7 +27,6 @@ wandes_samples <- wandes_mod$sample(data = data_package$data,
 
 # attempt to fit the data-augmented MSOM
 # First attempt
-library(flocker)
 fd <- readRDS("/Users/Jacob/Desktop/fd.RDS")
 
 user_prior <- c(brms::set_prior("normal(-3, 1)", class = "Intercept"), 
