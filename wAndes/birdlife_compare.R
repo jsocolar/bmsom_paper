@@ -16,8 +16,7 @@ wandes_data <- readRDS("/Users/JacobSocolar/Dropbox/Work/Occupancy/biogeographic
 length(unique(wandes_data$data$integer_data$id_sp[wandes_data$data$integer_data$Q == 1]))
 length(unique(wandes_data$data$integer_data$id_sp))
 
-birds <- readRDS("/Users/jacobSocolar/Dropbox/Work/Colombia/Data/Analysis/birds.RDS")
-wandes_birds <- birds[grepl("wandes", birds$subregion),]
+wandes_birds <- readRDS("/Users/jacobsocolar/Dropbox/Work/Occupancy/biogeographicMSOM/wandes_birds.RDS")
 
 w_sp_obs_columns <- c(wandes_birds$sp_obs1, wandes_birds$sp_obs2, 
                       wandes_birds$sp_obs3, wandes_birds$sp_obs4)
