@@ -1,10 +1,11 @@
-// This is a Stan model for the full Colombia bird dataset, version 9.0, which is built on 7.0
-// Changes:   switching to slice the occupancy intercept
-//            better naming of data containers
+// bMSOM Stan model for the West Andes analysis presented in "Biogeographic 
+// multi-species occupancy models for large-scale survey data"
+// Note: code inherits from version 9.0 of the pan-Colombia model
 
-// function to form a matrix with the same dimensions as ind, whose elements i,j are given by cov_u[ind[i,j]].
-// This strategy for vectorizing the operation is due to Juho Timonen in Stan Slack post on 3 March 2021.
 functions{
+  // function to form a matrix with the same dimensions as ind, whose elements 
+  // i,j are given by cov_u[ind[i,j]]. This strategy for vectorizing the 
+  // operation is due to Juho Timonen in Stan Slack post on 3 March 2021.
   matrix rt_mat(
     int r, // number of rows
     int c, // number of columns
@@ -16,7 +17,7 @@ functions{
     return(out);
   }
   
-  
+  // partial sum function for computing likelihood in parallel
   real partial_sum(
     // Function arguments:
       // Data slicing and indexing
@@ -262,7 +263,7 @@ functions{
         
       for (r in 1:len) {  // loop over species-points
         logit_theta = logit_theta_vector[r] + logit_theta_matrix[r,1:data_slice[r,6]] + d0_spObs[data_slice[r,11:(10 + data_slice[r,6])]];
-        // likelihood
+        // marginalised likelihood 
         if (data_slice[r,5] == 1) {
           lp[r] = log_inv_logit(logit_psi[r]) +  // likelihood of occupancy
           bernoulli_logit_lpmf(data_slice[r, 1:data_slice[r,6]] | logit_theta);   // conditional likelihood of observed history
@@ -654,4 +655,3 @@ model {
           d3_mass, d3_elevMedian, d3_migratory, d3_dietCarn, d3_x_time_elevMedian
     ); // end reduce_sum call
 } // end model block
-

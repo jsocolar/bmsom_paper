@@ -1,4 +1,7 @@
-// generated with brms 2.16.1
+// data-augmented Stan model for the West Andes analysis presented in 
+// "Biogeographic multi-species occupancy models for large-scale survey data"
+// Note: code generated with brms 2.16.1
+
 functions {
  /* compute correlated group-level effects
   * Args: 
